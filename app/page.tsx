@@ -1,9 +1,9 @@
-import Image from "next/image";
+import TodoDashboard from "@/components/TodoDashboard";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      
-    </div>
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50">
+      <TodoDashboard />
+    </main>
   );
 }
