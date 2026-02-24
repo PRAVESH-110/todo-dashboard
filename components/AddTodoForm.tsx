@@ -6,26 +6,28 @@ import { useTodoContext } from "@/context/TodoContext";
 
 export default function AddTodoForm() {
     const [value, setValue] = useState("");
-    const [shake, setShake] = useState(false);
     const { addTodo } = useTodoContext();
     const inputRef = useRef<HTMLInputElement>(null);
 
-    function handleSubmit() {
+    const submitTodo = (): void => {
         const trimmed = value.trim();
         if (!trimmed) {
-            setShake(true);
-            setTimeout(() => setShake(false), 500);
             inputRef.current?.focus();
             return;
         }
         addTodo(trimmed);
         setValue("");
         inputRef.current?.focus();
-    }
+    };
 
-    function handleKeyDown(e: React.KeyboardEvent) {
-        if (e.key === "Enter") handleSubmit();
-    }
+    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
+        e.preventDefault();
+        submitTodo();
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent): void => {
+        if (e.key === "Enter") submitTodo();
+    };
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
@@ -37,7 +39,7 @@ export default function AddTodoForm() {
                     <h2 className="text-sm font-semibold text-slate-800">Add New Todo</h2>
                 </div>
             </div>
-            <div className={`flex gap-3 ${shake ? "animate-shake" : ""}`}>
+            <div className="flex gap-3">
                 <input
                     ref={inputRef}
                     type="text"

@@ -20,7 +20,7 @@ export default function TodoDashboard() {
     function handlePageChange(newPage: number) {
         if (newPage < 1 || newPage > TOTAL_PAGES) return;
         setPage(newPage);
-        // Scroll smoothly to top of list
+        // Scroll smoothly to top of list on new page
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -104,7 +104,7 @@ export default function TodoDashboard() {
                 >
                     JSONPlaceholder
                 </a>{" "}
-                · Toggle tasks locally · Additions are session-only
+                · Toggle tasks locally · Additions are stored in localStorage
             </p>
         </div>
     );

@@ -4,6 +4,7 @@ import React, {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useState,
 } from "react";
 import { Todo } from "@/types/todo";
@@ -23,6 +24,33 @@ let localIdCounter = -1; // negative ids to avoid collision with API ids
 export function TodoProvider({ children }: { children: React.ReactNode }) {
     const [toggledIds, setToggledIds] = useState<Set<number>>(new Set());
     const [localTodos, setLocalTodos] = useState<Todo[]>([]);
+
+    // Load from localStorage on first mount (client-only)
+    useEffect(() => {
+        const storedTodos = localStorage.getItem("localTodos");
+        if (storedTodos) {
+            const parsed: Todo[] = JSON.parse(storedTodos);
+            setLocalTodos(parsed);
+            // Restore counter so new IDs don't clash with saved ones
+            const minId = parsed.reduce((min, t) => Math.min(min, t.id), 0);
+            localIdCounter = minId - 1;
+        }
+
+        const storedToggled = localStorage.getItem("toggledIds");
+        if (storedToggled) {
+            setToggledIds(new Set<number>(JSON.parse(storedToggled)));
+        }
+    }, []);
+
+    // Persist localTodos to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem("localTodos", JSON.stringify(localTodos));
+    }, [localTodos]);
+
+    // Persist toggledIds to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem("toggledIds", JSON.stringify([...toggledIds]));
+    }, [toggledIds]);
 
     const toggleTodo = useCallback((id: number) => {
         setToggledIds((prev) => {
@@ -49,7 +77,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
 
     const isCompleted = useCallback(
         (todo: Todo) => {
-            // If the todo has been toggled, flip its original state
+            // If toggled, flip the original completed state
             if (toggledIds.has(todo.id)) {
                 return !todo.completed;
             }
