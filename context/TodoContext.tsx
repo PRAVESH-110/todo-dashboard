@@ -14,6 +14,7 @@ interface TodoContextType {
     localTodos: Todo[];
     toggleTodo: (id: number) => void;
     addTodo: (title: string) => void;
+    deleteTodo: (id: number) => void;
     isCompleted: (todo: Todo) => boolean;
 }
 
@@ -75,6 +76,10 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
         setLocalTodos((prev) => [newTodo, ...prev]);
     }, []);
 
+    const deleteTodo = useCallback((id: number) => {
+        setLocalTodos((prev) => prev.filter((t) => t.id !== id));
+    }, []);
+
     const isCompleted = useCallback(
         (todo: Todo) => {
             // If toggled, flip the original completed state
@@ -88,7 +93,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <TodoContext.Provider
-            value={{ toggledIds, localTodos, toggleTodo, addTodo, isCompleted }}
+            value={{ toggledIds, localTodos, toggleTodo, addTodo, deleteTodo, isCompleted }}
         >
             {children}
         </TodoContext.Provider>
@@ -96,7 +101,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTodoContext() {
-    const ctx = useContext(TodoContext);
-    if (!ctx) throw new Error("useTodoContext must be used inside TodoProvider");
-    return ctx;
+    const contex = useContext(TodoContext);
+    if (!contex) throw new Error("useTodoContext must be used inside TodoProvider");
+    return contex;
 }

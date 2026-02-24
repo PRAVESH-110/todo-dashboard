@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, RotateCcw, Pin } from "lucide-react";
+import { Check, RotateCcw, Pin, Trash2 } from "lucide-react";
 import { Todo } from "@/types/todo";
 import { useTodoContext } from "@/context/TodoContext";
 
@@ -10,7 +10,7 @@ interface TodoItemProps {
 }
 
 export default function TodoItem({ todo, index }: TodoItemProps) {
-    const { toggleTodo, isCompleted } = useTodoContext();
+    const { toggleTodo, isCompleted, deleteTodo } = useTodoContext();
     const completed = isCompleted(todo);
 
     return (
@@ -37,8 +37,8 @@ export default function TodoItem({ todo, index }: TodoItemProps) {
             <div className="flex-1 min-w-0">
                 <p
                     className={`text-sm leading-relaxed transition-all duration-200 ${completed
-                            ? "text-slate-400 line-through"
-                            : "text-slate-700 group-hover:text-slate-900"
+                        ? "text-slate-400 line-through"
+                        : "text-slate-700 group-hover:text-slate-900"
                         }`}
                 >
                     {todo.title}
@@ -57,12 +57,24 @@ export default function TodoItem({ todo, index }: TodoItemProps) {
             {/* Status badge */}
             <span
                 className={`flex-shrink-0 text-xs font-medium px-2.5 py-1 rounded-full transition-all duration-200 ${completed
-                        ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                        : "bg-slate-100 text-slate-500 border border-slate-200"
+                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                    : "bg-slate-100 text-slate-500 border border-slate-200"
                     }`}
             >
                 {completed ? "Done" : "Pending"}
             </span>
+
+            {/* Delete button — only for local todos */}
+            {todo.isLocal && (
+                <button
+                    onClick={() => deleteTodo(todo.id)}
+                    aria-label="Delete todo"
+                    className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                               p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50"
+                >
+                    <Trash2 className="w-3.5 h-3.5" />
+                </button>
+            )}
         </li>
     );
 }
